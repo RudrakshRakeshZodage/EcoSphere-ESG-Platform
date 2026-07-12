@@ -233,3 +233,16 @@ export interface ProductESGProfile {
   notes: string | null;
   created_at: string;
 }
+
+export interface TrainingCompletion {
+  id: string;
+  employee_id: string;
+  training_name: string;
+  completed_at: string;
+  score: number | null;
+  status: 'Completed' | 'In Progress' | 'Failed';
+  profiles?: {
+    full_name: string;
+    email: string;
+  };
+}

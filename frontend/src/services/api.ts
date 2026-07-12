@@ -74,6 +74,10 @@ export const approveParticipation = (id: string, status: string) => api.put(`/so
 
 export const getDiversityMetrics = () => api.get('/social/diversity');
 
+export const getTrainingCompletions = () => api.get('/social/training');
+export const createTrainingCompletion = (data: Record<string, unknown>) => api.post('/social/training', data);
+export const deleteTrainingCompletion = (id: string) => api.delete(`/social/training/${id}`);
+
 // ============================================
 // Governance
 // ============================================

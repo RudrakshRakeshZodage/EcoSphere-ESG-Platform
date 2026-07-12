@@ -185,3 +185,48 @@ async def diversity_metrics(current_user: dict = Depends(get_current_user)):
             "total_participations": len(participations.data),
         }
     }
+
+
+# --- Training Completions ---
+
+class TrainingCompletionCreate(BaseModel):
+    employee_id: str
+    training_name: str
+    completed_at: Optional[date] = None
+    score: Optional[int] = None
+    status: str = "Completed"
+
+
+@router.get("/training")
+async def list_training_completions(current_user: dict = Depends(get_current_user)):
+    """List all employee training completions."""
+    supabase = get_supabase_client()
+    result = supabase.table("training_completions").select(
+        "*, profiles(full_name, email)"
+    ).order("completed_at", desc=True).execute()
+    return {"data": result.data}
+
+
+@router.post("/training")
+async def create_training_completion(
+    completion: TrainingCompletionCreate,
+    current_user: dict = Depends(require_admin)
+):
+    """Create a new training completion record (admin only)."""
+    supabase = get_supabase_client()
+    data = completion.model_dump(exclude_none=True)
+    if "completed_at" in data and data["completed_at"]:
+        data["completed_at"] = str(data["completed_at"])
+    result = supabase.table("training_completions").insert(data).execute()
+    return {"data": result.data[0] if result.data else None}
+
+
+@router.delete("/training/{completion_id}")
+async def delete_training_completion(
+    completion_id: str,
+    current_user: dict = Depends(require_admin)
+):
+    """Delete a training completion record (admin only)."""
+    supabase = get_supabase_client()
+    supabase.table("training_completions").delete().eq("id", completion_id).execute()
+    return {"message": "Training completion deleted"}

@@ -430,6 +430,23 @@ CREATE POLICY "Admins manage product profiles" ON product_esg_profiles FOR ALL U
 -- Insert default settings
 INSERT INTO esg_settings (id) VALUES (1) ON CONFLICT (id) DO NOTHING;
 
+-- Training Completions (Social Module)
+CREATE TABLE IF NOT EXISTS training_completions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    employee_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+    training_name TEXT NOT NULL,
+    completed_at DATE NOT NULL DEFAULT CURRENT_DATE,
+    score INTEGER CHECK (score >= 0 AND score <= 100),
+    status TEXT DEFAULT 'Completed' CHECK (status IN ('Completed', 'In Progress', 'Failed')),
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE training_completions ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Training completions viewable by all" ON training_completions;
+CREATE POLICY "Training completions viewable by all" ON training_completions FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Admins manage training completions" ON training_completions;
+CREATE POLICY "Admins manage training completions" ON training_completions FOR ALL USING (true);
+
 -- ============================================
 -- STORAGE BUCKET for Evidence Files
 -- ============================================
