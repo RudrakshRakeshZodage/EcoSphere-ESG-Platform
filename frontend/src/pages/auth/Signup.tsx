@@ -67,12 +67,12 @@ export const Signup: React.FC = () => {
         // 3. Fallback: If network fails and there is no cache, load default departments
         if (!cached) {
           const fallbackDepts: Department[] = [
-            { id: '20bcdff1-fd5d-4c88-9b5f-90983c5c90bb', name: 'Engineering', code: 'ENG', head_name: 'Rajesh Kumar', parent_department_id: null, employee_count: 45, status: 'Active', created_at: '' },
-            { id: 'c22a999e-d4a5-44ba-a5eb-8f62dd4f79fa', name: 'Finance', code: 'FIN', head_name: 'Sneha Reddy', parent_department_id: null, employee_count: 18, status: 'Active', created_at: '' },
-            { id: 'c3cc6ddb-2778-4df3-b18d-d6a18d3cc063', name: 'Human Resources', code: 'HR', head_name: 'Priya Sharma', parent_department_id: null, employee_count: 12, status: 'Active', created_at: '' },
-            { id: 'dabec5f6-d67c-4e12-a20d-97d9d326ed70', name: 'Marketing', code: 'MKT', head_name: 'Vikram Singh', parent_department_id: null, employee_count: 22, status: 'Active', created_at: '' },
-            { id: 'db9045d4-fcf5-4234-9aed-c8f920a99457', name: 'Operations', code: 'OPS', head_name: 'Amit Patel', parent_department_id: null, employee_count: 30, status: 'Active', created_at: '' },
-            { id: 'e96e60b5-3bd6-4283-82e3-1e511a3f7431', name: 'Research & Development', code: 'R&D', head_name: 'Ananya Gupta', parent_department_id: null, employee_count: 15, status: 'Active', created_at: '' }
+            { id: '20bcdff1-fd5d-4c88-9b5f-90983c5c90bb', name: 'Engineering', code: 'ENG', employee_count: 45, status: 'Active', head_name: 'Rajesh Kumar', parent_department_id: null, created_at: new Date().toISOString() },
+            { id: 'c22a999e-d4a5-44ba-a5eb-8f62dd4f79fa', name: 'Finance', code: 'FIN', employee_count: 18, status: 'Active', head_name: 'Sneha Reddy', parent_department_id: null, created_at: new Date().toISOString() },
+            { id: 'c3cc6ddb-2778-4df3-b18d-d6a18d3cc063', name: 'Human Resources', code: 'HR', employee_count: 12, status: 'Active', head_name: 'Priya Sharma', parent_department_id: null, created_at: new Date().toISOString() },
+            { id: 'dabec5f6-d67c-4e12-a20d-97d9d326ed70', name: 'Marketing', code: 'MKT', employee_count: 22, status: 'Active', head_name: 'Vikram Singh', parent_department_id: null, created_at: new Date().toISOString() },
+            { id: 'db9045d4-fcf5-4234-9aed-c8f920a99457', name: 'Operations', code: 'OPS', employee_count: 30, status: 'Active', head_name: 'Amit Patel', parent_department_id: null, created_at: new Date().toISOString() },
+            { id: 'e96e60b5-3bd6-4283-82e3-1e511a3f7431', name: 'Research & Development', code: 'R&D', employee_count: 15, status: 'Active', head_name: 'Ananya Gupta', parent_department_id: null, created_at: new Date().toISOString() }
           ];
           setDepartments(fallbackDepts);
           setDepartmentId(fallbackDepts[0].id);
@@ -449,8 +449,9 @@ export const Signup: React.FC = () => {
               <select
                 value={departmentId}
                 onChange={(e) => setDepartmentId(e.target.value)}
-                required
+                required={departments.length > 0}
               >
+                <option value="">Select a department...</option>
                 {departments.map((dept) => (
                   <option key={dept.id} value={dept.id}>
                     {dept.name} ({dept.code})
