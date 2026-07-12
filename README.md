@@ -1,4 +1,4 @@
-# <p align="center"><img src="frontend/src/pages/environmental/ProductProfiles.tsx" width="45" height="45" style="display:none;" /> 🌍 EcoSphere: Corporate ESG Management & Engagement Platform</p>
+# <p align="center"><img src="logo.svg" width="40" height="40" align="center" style="vertical-align: middle; margin-right: 10px;" /> EcoSphere: Corporate ESG Management & Engagement Platform</p>
 
 <p align="center">
   <strong>EcoSphere</strong> is a premium, full-stack enterprise platform that integrates Environmental, Social, and Governance (ESG) tracking directly into daily ERP operations, driving corporate sustainability through interactive employee gamification.
@@ -14,17 +14,6 @@
   <a href="#"><img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge" alt="MIT License" /></a>
 </p>
 
----
-
-## 🎬 Product Showcase
-
-EcoSphere features a state-of-the-art **Glassmorphic Dark UI** designed to engage employees while offering senior management deep analytical control.
-
-*   **Split-Screen Landing Portal**: Dynamic background particle physics and interactive branding showcase.
-*   **Unified ESG Dashboard**: Live widgets displaying carbon emissions trend, organizational ranking, and active challenges.
-*   **Report Builder**: Multi-filter report compiler with direct PDF, Excel, and CSV export.
-
----
 
 ## 📊 Workflow: Challenge & Badge Auto-Unlock Engine
 
