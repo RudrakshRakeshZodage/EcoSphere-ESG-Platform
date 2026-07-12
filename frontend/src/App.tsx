@@ -12,6 +12,7 @@ import { Goals } from './pages/environmental/Goals';
 import { CsrActivities } from './pages/social/CsrActivities';
 import { Participations } from './pages/social/Participations';
 import { DiversityMetrics } from './pages/social/DiversityMetrics';
+import { TrainingCompletions } from './pages/social/TrainingCompletions';
 import { Policies } from './pages/governance/Policies';
 import { Audits } from './pages/governance/Audits';
 import { ComplianceIssues } from './pages/governance/ComplianceIssues';
@@ -56,6 +57,7 @@ function AppRoutes() {
       <Route path="/social/csr-activities" element={<ProtectedRoute><CsrActivities /></ProtectedRoute>} />
       <Route path="/social/participations" element={<ProtectedRoute><Participations /></ProtectedRoute>} />
       <Route path="/social/diversity" element={<ProtectedRoute><DiversityMetrics /></ProtectedRoute>} />
+      <Route path="/social/training" element={<ProtectedRoute><TrainingCompletions /></ProtectedRoute>} />
 
       {/* Governance */}
       <Route path="/governance/policies" element={<ProtectedRoute><Policies /></ProtectedRoute>} />

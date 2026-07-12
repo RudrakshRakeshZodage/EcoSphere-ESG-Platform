@@ -177,6 +177,41 @@ export const Settings: React.FC = () => {
           </Card>
         )}
 
+        {/* Notification Settings */}
+        {settings && (
+          <Card title="Notification Settings" subtitle="Configure notification channels for events">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '10px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <h4 style={{ color: '#fff', fontSize: '0.95rem' }}>In-App Notifications</h4>
+                  <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Show notifications inside the platform header/inbox.</p>
+                </div>
+                <button
+                  onClick={() => handleUpdateToggle('notification_in_app', settings.notification_in_app)}
+                  disabled={!isAdmin}
+                  style={{ background: 'transparent', border: 'none', color: settings.notification_in_app ? 'var(--primary-color)' : 'var(--text-muted)' }}
+                >
+                  {settings.notification_in_app ? <ToggleRight size={36} /> : <ToggleLeft size={36} />}
+                </button>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <h4 style={{ color: '#fff', fontSize: '0.95rem' }}>Email Notifications</h4>
+                  <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Send email updates for major ESG milestones and alerts.</p>
+                </div>
+                <button
+                  onClick={() => handleUpdateToggle('notification_email', settings.notification_email)}
+                  disabled={!isAdmin}
+                  style={{ background: 'transparent', border: 'none', color: settings.notification_email ? 'var(--primary-color)' : 'var(--text-muted)' }}
+                >
+                  {settings.notification_email ? <ToggleRight size={36} /> : <ToggleLeft size={36} />}
+                </button>
+              </div>
+            </div>
+          </Card>
+        )}
+
         {/* Weights Scoring Configuration */}
         <Card title="Corporate ESG Weights" subtitle="Adjust criteria contributions to corporate score">
           <form onSubmit={handleUpdateWeights} style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '10px' }}>

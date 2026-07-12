@@ -49,6 +49,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
         { name: 'CSR Activities', path: '/social/csr-activities', icon: Users },
         { name: 'Participations', path: '/social/participations', icon: CheckSquare },
         { name: 'Diversity Metrics', path: '/social/diversity', icon: Activity },
+        { name: 'Training Completion', path: '/social/training', icon: CheckSquare },
       ]
     },
     {
