@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { X, Check, Bell } from 'lucide-react';
 import { supabase } from '../../services/supabaseClient';
-import { Notification } from '../../types';
+import type { Notification } from '../../types';
 import { useAuth } from '../../context/AuthContext';
 
 interface NotificationPanelProps {

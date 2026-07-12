@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getDashboard } from '../services/api';
-import { DashboardData } from '../types';
+import type { DashboardData } from '../types';
 import { StatCard } from '../components/ui/StatCard';
 import { Card } from '../components/ui/Card';
 import { DataTable } from '../components/ui/DataTable';
