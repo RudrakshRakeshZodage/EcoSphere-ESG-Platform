@@ -236,12 +236,12 @@ def _draw_environmental_chart(data: list):
     labels = [d[0] for d in sorted_depts]
     values = [d[1] for d in sorted_depts]
 
-    d = Drawing(400, 160)
+    d = Drawing(360, 160)
     bc = VerticalBarChart()
     bc.x = 40
     bc.y = 20
     bc.height = 110
-    bc.width = 320
+    bc.width = 280
     bc.data = [values]
     bc.categoryAxis.categoryNames = labels
     bc.categoryAxis.labels.fontSize = 7
@@ -253,7 +253,46 @@ def _draw_environmental_chart(data: list):
     bc.bars[0].fillColor = colors.HexColor("#10B981") # Brand Green
     
     d.add(bc)
-    d.add(String(200, 145, "CO2 Emissions by Department (kg CO2e)", textAnchor='middle', fontSize=9, fontName='Helvetica-Bold'))
+    d.add(String(180, 145, "CO2 Emissions by Department (kg CO2e)", textAnchor='middle', fontSize=9, fontName='Helvetica-Bold'))
+    return d
+
+
+def _draw_environmental_source_chart(data: list):
+    from reportlab.graphics.shapes import Drawing, String
+    from reportlab.graphics.charts.piecharts import Pie
+    from reportlab.lib import colors
+
+    source_emissions = {}
+    for r in data:
+        source = r.get("Source Type", "Other")
+        try:
+            em = float(r.get("Emission (kg CO2e)", 0))
+        except ValueError:
+            em = 0.0
+        source_emissions[source] = source_emissions.get(source, 0.0) + em
+
+    if not source_emissions or sum(source_emissions.values()) == 0:
+        return None
+
+    labels = list(source_emissions.keys())
+    values = [float(f"{v:.2f}") for v in source_emissions.values()]
+
+    d = Drawing(360, 160)
+    pc = Pie()
+    pc.x = 100
+    pc.y = 10
+    pc.width = 120
+    pc.height = 120
+    pc.data = values
+    pc.labels = [f"{l} ({v} kg)" for l, v in zip(labels, values)]
+    pc.sideLabels = 1
+
+    color_palette = [colors.HexColor("#047857"), colors.HexColor("#065f46"), colors.HexColor("#022c22"), colors.HexColor("#34d399")]
+    for i in range(len(values)):
+        pc.slices[i].fillColor = color_palette[i % len(color_palette)]
+
+    d.add(pc)
+    d.add(String(180, 145, "Emissions by Source Type", textAnchor='middle', fontSize=9, fontName='Helvetica-Bold'))
     return d
 
 
@@ -273,9 +312,9 @@ def _draw_social_chart(data: list):
     labels = list(status_counts.keys())
     values = list(status_counts.values())
     
-    d = Drawing(400, 160)
+    d = Drawing(360, 160)
     pc = Pie()
-    pc.x = 120
+    pc.x = 100
     pc.y = 10
     pc.width = 120
     pc.height = 120
@@ -288,7 +327,46 @@ def _draw_social_chart(data: list):
         pc.slices[i].fillColor = color_palette[i % len(color_palette)]
         
     d.add(pc)
-    d.add(String(200, 145, "CSR Participation Status Breakdown", textAnchor='middle', fontSize=9, fontName='Helvetica-Bold'))
+    d.add(String(180, 145, "CSR Participation Status Breakdown", textAnchor='middle', fontSize=9, fontName='Helvetica-Bold'))
+    return d
+
+
+def _draw_social_activity_chart(data: list):
+    from reportlab.graphics.shapes import Drawing, String
+    from reportlab.graphics.charts.barcharts import VerticalBarChart
+    from reportlab.lib import colors
+
+    emp_counts = {}
+    for r in data:
+        emp = r.get("Employee", "Unknown")
+        emp_counts[emp] = emp_counts.get(emp, 0) + 1
+
+    if not emp_counts:
+        return None
+
+    # Take top 5 volunteer employees
+    sorted_emps = sorted(emp_counts.items(), key=lambda x: x[1], reverse=True)[:5]
+    labels = [e[0] for e in sorted_emps]
+    values = [e[1] for e in sorted_emps]
+
+    d = Drawing(360, 160)
+    bc = VerticalBarChart()
+    bc.x = 30
+    bc.y = 20
+    bc.height = 110
+    bc.width = 280
+    bc.data = [values]
+    bc.categoryAxis.categoryNames = labels
+    bc.categoryAxis.labels.fontSize = 7
+    bc.categoryAxis.labels.dy = -10
+    bc.valueAxis.valueMin = 0
+    bc.valueAxis.valueMax = max(values) + 1 if values else 5
+    bc.valueAxis.valueStep = 1
+    bc.valueAxis.labels.fontSize = 7
+    bc.bars[0].fillColor = colors.HexColor("#3B82F6") # Brand Blue
+
+    d.add(bc)
+    d.add(String(180, 145, "Top Volunteers by Participation", textAnchor='middle', fontSize=9, fontName='Helvetica-Bold'))
     return d
 
 
@@ -308,9 +386,9 @@ def _draw_governance_chart(data: list):
     labels = list(sev_counts.keys())
     values = list(sev_counts.values())
     
-    d = Drawing(400, 160)
+    d = Drawing(360, 160)
     pc = Pie()
-    pc.x = 120
+    pc.x = 100
     pc.y = 10
     pc.width = 120
     pc.height = 120
@@ -323,7 +401,42 @@ def _draw_governance_chart(data: list):
         pc.slices[i].fillColor = color_palette[i % len(color_palette)]
         
     d.add(pc)
-    d.add(String(200, 145, "Compliance Issues by Severity", textAnchor='middle', fontSize=9, fontName='Helvetica-Bold'))
+    d.add(String(180, 145, "Compliance Issues by Severity", textAnchor='middle', fontSize=9, fontName='Helvetica-Bold'))
+    return d
+
+
+def _draw_governance_status_chart(data: list):
+    from reportlab.graphics.shapes import Drawing, String
+    from reportlab.graphics.charts.piecharts import Pie
+    from reportlab.lib import colors
+
+    status_counts = {}
+    for r in data:
+        status = r.get("Status", "Open")
+        status_counts[status] = status_counts.get(status, 0) + 1
+
+    if not status_counts:
+        return None
+
+    labels = list(status_counts.keys())
+    values = list(status_counts.values())
+
+    d = Drawing(360, 160)
+    pc = Pie()
+    pc.x = 100
+    pc.y = 10
+    pc.width = 120
+    pc.height = 120
+    pc.data = values
+    pc.labels = [f"{l} ({v})" for l, v in zip(labels, values)]
+    pc.sideLabels = 1
+
+    color_palette = [colors.HexColor("#3B82F6"), colors.HexColor("#F59E0B"), colors.HexColor("#10B981")]
+    for i in range(len(values)):
+        pc.slices[i].fillColor = color_palette[i % len(color_palette)]
+
+    d.add(pc)
+    d.add(String(180, 145, "Compliance Issues by Status", textAnchor='middle', fontSize=9, fontName='Helvetica-Bold'))
     return d
 
 
@@ -348,12 +461,12 @@ def _draw_esg_summary_chart(data: list):
     labels = [d[0] for d in sorted_depts]
     values = [d[1] for d in sorted_depts]
     
-    d = Drawing(400, 160)
+    d = Drawing(360, 160)
     bc = VerticalBarChart()
     bc.x = 40
     bc.y = 20
     bc.height = 110
-    bc.width = 320
+    bc.width = 280
     bc.data = [values]
     bc.categoryAxis.categoryNames = labels
     bc.categoryAxis.labels.fontSize = 7
@@ -365,7 +478,58 @@ def _draw_esg_summary_chart(data: list):
     bc.bars[0].fillColor = colors.HexColor("#3B82F6") # Blue
     
     d.add(bc)
-    d.add(String(200, 145, "Total ESG Scores by Department", textAnchor='middle', fontSize=9, fontName='Helvetica-Bold'))
+    d.add(String(180, 145, "Total ESG Scores by Department", textAnchor='middle', fontSize=9, fontName='Helvetica-Bold'))
+    return d
+
+
+def _draw_esg_distribution_chart(data: list):
+    from reportlab.graphics.shapes import Drawing, String
+    from reportlab.graphics.charts.piecharts import Pie
+    from reportlab.lib import colors
+
+    if not data:
+        return None
+
+    env_total = 0.0
+    soc_total = 0.0
+    gov_total = 0.0
+    count = 0
+
+    for r in data:
+        try:
+            env_total += float(r.get("Environmental Score", 0))
+            soc_total += float(r.get("Social Score", 0))
+            gov_total += float(r.get("Governance Score", 0))
+            count += 1
+        except ValueError:
+            continue
+
+    if count == 0:
+        return None
+
+    labels = ["Environmental", "Social", "Governance"]
+    values = [
+        float(f"{env_total / count:.1f}"),
+        float(f"{soc_total / count:.1f}"),
+        float(f"{gov_total / count:.1f}")
+    ]
+
+    d = Drawing(360, 160)
+    pc = Pie()
+    pc.x = 100
+    pc.y = 10
+    pc.width = 120
+    pc.height = 120
+    pc.data = values
+    pc.labels = [f"{l} ({v} avg)" for l, v in zip(labels, values)]
+    pc.sideLabels = 1
+
+    color_palette = [colors.HexColor("#10B981"), colors.HexColor("#3B82F6"), colors.HexColor("#F59E0B")]
+    for i in range(len(values)):
+        pc.slices[i].fillColor = color_palette[i % len(color_palette)]
+
+    d.add(pc)
+    d.add(String(180, 145, "Global ESG Criteria Weights Balance", textAnchor='middle', fontSize=9, fontName='Helvetica-Bold'))
     return d
 
 
@@ -385,20 +549,35 @@ def _generate_pdf(data: list, title: str):
     elements.append(Paragraph(f"Generated: {date.today()}", styles["Normal"]))
     elements.append(Spacer(1, 15))
 
-    # Add Chart to PDF
+    # Add Charts to PDF (Two-column layout side-by-side if two charts exist)
     if data:
-        chart_drawing = None
+        charts = []
         if "Environmental" in title:
-            chart_drawing = _draw_environmental_chart(data)
+            charts.append(_draw_environmental_chart(data))
+            charts.append(_draw_environmental_source_chart(data))
         elif "Social" in title:
-            chart_drawing = _draw_social_chart(data)
+            charts.append(_draw_social_chart(data))
+            charts.append(_draw_social_activity_chart(data))
         elif "Governance" in title:
-            chart_drawing = _draw_governance_chart(data)
+            charts.append(_draw_governance_chart(data))
+            charts.append(_draw_governance_status_chart(data))
         elif "ESG Summary" in title:
-            chart_drawing = _draw_esg_summary_chart(data)
+            charts.append(_draw_esg_summary_chart(data))
+            charts.append(_draw_esg_distribution_chart(data))
 
-        if chart_drawing:
-            elements.append(chart_drawing)
+        active_charts = [c for c in charts if c is not None]
+        if len(active_charts) == 2:
+            # Place both charts side-by-side in a layout table
+            chart_layout = Table([[active_charts[0], active_charts[1]]])
+            chart_layout.setStyle(TableStyle([
+                ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+                ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 10),
+            ]))
+            elements.append(chart_layout)
+            elements.append(Spacer(1, 15))
+        elif len(active_charts) == 1:
+            elements.append(active_charts[0])
             elements.append(Spacer(1, 15))
 
     if data:
