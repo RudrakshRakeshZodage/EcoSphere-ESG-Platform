@@ -87,23 +87,48 @@ export const Signup: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/signup`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
+      let signupSuccess = false;
+
+      try {
+        // Try backend signup first (which auto-confirms email using admin key)
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/signup`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email,
+            password,
+            full_name: fullName,
+            role,
+            department_id: departmentId || null
+          })
+        });
+
+        if (response.ok) {
+          signupSuccess = true;
+        } else {
+          const errText = await response.text();
+          console.warn("Backend signup failed, falling back to client-side:", errText);
+        }
+      } catch (backendErr) {
+        console.warn("Backend signup request failed, falling back to client-side:", backendErr);
+      }
+
+      if (!signupSuccess) {
+        // Fallback: Standard client-side signup
+        const { error: signupError } = await supabase.auth.signUp({
           email,
           password,
-          full_name: fullName,
-          role,
-          department_id: departmentId || null
-        })
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.detail || 'Signup failed');
+          options: {
+            data: {
+              full_name: fullName,
+              role: role,
+              department_id: departmentId
+            }
+          }
+        });
+        if (signupError) throw signupError;
       }
 
       // Automatically sign the user in since their email is pre-confirmed
