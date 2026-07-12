@@ -44,6 +44,25 @@ export const Login: React.FC = () => {
       setLoading(false);
     }
   };
+  const handleForgotPassword = async () => {
+    if (!email) {
+      setError('Please enter your email address in the input field first.');
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) throw error;
+      alert(`A password reset link has been sent to ${email}. Please check your inbox.`);
+    } catch (err: any) {
+      setError(err.message || 'Failed to send reset link');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="landing-container" style={{
@@ -343,9 +362,26 @@ export const Login: React.FC = () => {
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
-                Password
-              </label>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                  Password
+                </label>
+                <button
+                  type="button"
+                  onClick={handleForgotPassword}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: 'var(--primary-color)',
+                    fontSize: '0.78rem',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    padding: 0
+                  }}
+                >
+                  Forgot Password?
+                </button>
+              </div>
               <input
                 type="password"
                 value={password}

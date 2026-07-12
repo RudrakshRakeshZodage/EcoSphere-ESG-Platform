@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { Layout } from './components/layout/Layout';
 import { Login } from './pages/auth/Login';
 import { Signup } from './pages/auth/Signup';
+import { ResetPassword } from './pages/auth/ResetPassword';
 import { Dashboard } from './pages/Dashboard';
 import { EmissionFactors } from './pages/environmental/EmissionFactors';
 import { ProductProfiles } from './pages/environmental/ProductProfiles';
@@ -43,6 +44,7 @@ function AppRoutes() {
       {/* Public auth pages */}
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
 
       {/* Protected dashboard and core modules */}
       <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

@@ -5,6 +5,7 @@ import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { useAuth } from '../../context/AuthContext';
 import { Plus, ToggleLeft, ToggleRight } from 'lucide-react';
+import { supabase } from '../../services/supabaseClient';
 
 export const Settings: React.FC = () => {
   const { isAdmin } = useAuth();
@@ -24,6 +25,39 @@ export const Settings: React.FC = () => {
   const [envWeight, setEnvWeight] = useState(0.40);
   const [socialWeight, setSocialWeight] = useState(0.30);
   const [govWeight, setGovWeight] = useState(0.30);
+
+  // Change Password state
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [pwError, setPwError] = useState<string | null>(null);
+  const [pwSuccess, setPwSuccess] = useState<string | null>(null);
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPwError(null);
+    setPwSuccess(null);
+
+    if (newPassword !== confirmNewPassword) {
+      setPwError('Passwords do not match.');
+      return;
+    }
+    if (newPassword.length < 6) {
+      setPwError('Password must be at least 6 characters.');
+      return;
+    }
+
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword
+      });
+      if (error) throw error;
+      setPwSuccess('Password updated successfully!');
+      setNewPassword('');
+      setConfirmNewPassword('');
+    } catch (err: any) {
+      setPwError(err.message || 'Failed to change password.');
+    }
+  };
 
   const fetchAllSettings = async () => {
     try {
@@ -290,6 +324,41 @@ export const Settings: React.FC = () => {
           </Card>
         </div>
       )}
+      {/* Change Password Card */}
+      <div style={{ marginTop: '30px' }}>
+        <Card title="Security & Authentication" subtitle="Change your account login password">
+          <form onSubmit={handleChangePassword} style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '10px', maxWidth: '400px' }}>
+            {pwError && <div style={{ color: '#f87171', fontSize: '0.85rem' }}>{pwError}</div>}
+            {pwSuccess && <div style={{ color: '#34d399', fontSize: '0.85rem' }}>{pwSuccess}</div>}
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-secondary)' }}>New Password</label>
+              <input 
+                type="password" 
+                value={newPassword} 
+                onChange={(e) => setNewPassword(e.target.value)} 
+                required 
+                placeholder="Minimum 6 characters" 
+              />
+            </div>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Confirm New Password</label>
+              <input 
+                type="password" 
+                value={confirmNewPassword} 
+                onChange={(e) => setConfirmNewPassword(e.target.value)} 
+                required 
+                placeholder="••••••••" 
+              />
+            </div>
+            
+            <Button type="submit" style={{ width: 'fit-content' }}>
+              Update Password
+            </Button>
+          </form>
+        </Card>
+      </div>
     </div>
   );
 };
