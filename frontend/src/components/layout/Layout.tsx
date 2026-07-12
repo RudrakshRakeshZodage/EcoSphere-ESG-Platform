@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
 import { NotificationPanel } from '../notifications/NotificationPanel';
+import { EsgChatbot } from './EsgChatbot';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -54,6 +55,9 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         onClose={() => setNotifOpen(false)} 
         setUnreadCount={setUnreadCount} 
       />
+
+      {/* Floating AI ESG Advisor Chatbot */}
+      <EsgChatbot />
     </div>
   );
 };
