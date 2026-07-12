@@ -39,7 +39,25 @@ export const Login: React.FC = () => {
       if (error) throw error;
       navigate('/');
     } catch (err: any) {
-      setError(err.message || 'Failed to sign in');
+      console.error("Login exception caught:", err);
+      let errMsg = 'Failed to sign in';
+      if (err) {
+        if (typeof err === 'string') {
+          errMsg = err;
+        } else if (err.message && typeof err.message === 'string') {
+          errMsg = err.message;
+        } else if (err.error_description && typeof err.error_description === 'string') {
+          errMsg = err.error_description;
+        } else if (err.error && typeof err.error === 'string') {
+          errMsg = err.error;
+        } else {
+          errMsg = err.toString ? err.toString() : 'Failed to sign in';
+        }
+      }
+      if (errMsg === '[object Object]' || errMsg === '{}') {
+        errMsg = 'Invalid email or password. Please try again.';
+      }
+      setError(errMsg);
     } finally {
       setLoading(false);
     }

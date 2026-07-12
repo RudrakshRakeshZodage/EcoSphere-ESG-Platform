@@ -140,7 +140,25 @@ export const Signup: React.FC = () => {
 
       navigate('/');
     } catch (err: any) {
-      setError(err.message || 'Failed to sign up');
+      console.error("Signup exception caught:", err);
+      let errMsg = 'Failed to sign up';
+      if (err) {
+        if (typeof err === 'string') {
+          errMsg = err;
+        } else if (err.message && typeof err.message === 'string') {
+          errMsg = err.message;
+        } else if (err.error_description && typeof err.error_description === 'string') {
+          errMsg = err.error_description;
+        } else if (err.error && typeof err.error === 'string') {
+          errMsg = err.error;
+        } else {
+          errMsg = err.toString ? err.toString() : 'Failed to sign up';
+        }
+      }
+      if (errMsg === '[object Object]' || errMsg === '{}') {
+        errMsg = 'Failed to sign up. Please check your Supabase Auth settings.';
+      }
+      setError(errMsg);
     } finally {
       setLoading(false);
     }
