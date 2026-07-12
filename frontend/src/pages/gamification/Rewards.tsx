@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getRewards, createReward, redeemReward } from '../../services/api';
-import { Reward } from '../../types';
+import type { Reward } from '../../types';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Modal } from '../../components/ui/Modal';

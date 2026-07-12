@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getLeaderboard } from '../../services/api';
 import { Card } from '../../components/ui/Card';
 import { DataTable } from '../../components/ui/DataTable';
-import { Trophy, Award, Zap } from 'lucide-react';
+import { Trophy, Zap } from 'lucide-react';
 
 export const Leaderboard: React.FC = () => {
   const [board, setBoard] = useState<any[]>([]);

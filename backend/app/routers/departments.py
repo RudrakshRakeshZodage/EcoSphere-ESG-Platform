@@ -26,7 +26,7 @@ class DepartmentUpdate(BaseModel):
 
 
 @router.get("")
-async def list_departments(current_user: dict = Depends(get_current_user)):
+async def list_departments():
     """List all departments."""
     supabase = get_supabase_client()
     result = supabase.table("departments").select("*").order("name").execute()

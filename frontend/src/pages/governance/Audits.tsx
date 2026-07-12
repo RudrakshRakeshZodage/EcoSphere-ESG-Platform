@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getAudits, createAudit, getDepartments } from '../../services/api';
-import { Audit, Department } from '../../types';
+import type { Audit, Department } from '../../types';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { DataTable } from '../../components/ui/DataTable';

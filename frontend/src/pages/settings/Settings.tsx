@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { getSettings, updateSettings, getDepartments, createDepartment, getCategories, createCategory } from '../../services/api';
-import { ESGSettings, Department, Category } from '../../types';
+import { getSettings, updateSettings, createDepartment, createCategory } from '../../services/api';
+import type { ESGSettings, Department, Category } from '../../types';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { useAuth } from '../../context/AuthContext';
@@ -9,8 +9,6 @@ import { Plus, ToggleLeft, ToggleRight } from 'lucide-react';
 export const Settings: React.FC = () => {
   const { isAdmin } = useAuth();
   const [settings, setSettings] = useState<ESGSettings | null>(null);
-  const [departments, setDepartments] = useState<Department[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Department Form state
@@ -29,19 +27,12 @@ export const Settings: React.FC = () => {
 
   const fetchAllSettings = async () => {
     try {
-      const [settingsRes, deptRes, catRes] = await Promise.all([
-        getSettings(),
-        getDepartments(),
-        getCategories()
-      ]);
+      const settingsRes = await getSettings();
       const data = settingsRes.data.data;
       setSettings(data);
       setEnvWeight(data.env_weight);
       setSocialWeight(data.social_weight);
       setGovWeight(data.gov_weight);
-
-      setDepartments(deptRes.data.data);
-      setCategories(catRes.data.data);
     } catch (err) {
       console.error('Error fetching settings metadata:', err);
     } finally {

@@ -3,6 +3,7 @@ import { Bell, Trophy, Zap } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../services/supabaseClient';
 
+
 interface HeaderProps {
   toggleNotifications: () => void;
   unreadCount: number;

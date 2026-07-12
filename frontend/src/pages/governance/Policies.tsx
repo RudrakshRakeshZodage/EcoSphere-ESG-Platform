@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getPolicies, createPolicy, deletePolicy, acknowledgePolicy, getAcknowledgements } from '../../services/api';
-import { ESGPolicy } from '../../types';
+import type { ESGPolicy } from '../../types';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { DataTable } from '../../components/ui/DataTable';
@@ -10,7 +10,7 @@ import { useAuth } from '../../context/AuthContext';
 import { Plus, Trash, Check, Eye } from 'lucide-react';
 
 export const Policies: React.FC = () => {
-  const { profile, isAdmin } = useAuth();
+  const { isAdmin } = useAuth();
   const [policies, setPolicies] = useState<ESGPolicy[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);

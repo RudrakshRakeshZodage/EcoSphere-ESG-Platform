@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { generateReport, getDepartments, getChallenges } from '../../services/api';
-import { Department, Challenge, UserProfile } from '../../types';
+import { generateReport, getDepartments } from '../../services/api';
+import type { Department, Challenge, UserProfile } from '../../types';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { supabase } from '../../services/supabaseClient';
@@ -8,9 +8,7 @@ import { FileText, Download } from 'lucide-react';
 
 export const ReportBuilder: React.FC = () => {
   const [departments, setDepartments] = useState<Department[]>([]);
-  const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [users, setUsers] = useState<UserProfile[]>([]);
-  const [loading, setLoading] = useState(true);
 
   // Filter states
   const [reportType, setReportType] = useState('environmental');
@@ -25,18 +23,14 @@ export const ReportBuilder: React.FC = () => {
   useEffect(() => {
     const fetchMetadata = async () => {
       try {
-        const [deptRes, chRes, userRes] = await Promise.all([
+        const [deptRes, userRes] = await Promise.all([
           getDepartments(),
-          getChallenges(),
           supabase.from('profiles').select('*')
         ]);
         setDepartments(deptRes.data.data);
-        setChallenges(chRes.data.data);
         setUsers(userRes.data || []);
       } catch (err) {
         console.error('Error fetching report metadata:', err);
-      } finally {
-        setLoading(false);
       }
     };
     fetchMetadata();
@@ -57,7 +51,7 @@ export const ReportBuilder: React.FC = () => {
       });
 
       // Create download link for generated file blob
-      const file = new Blob([res.data], { type: res.headers['content-type'] });
+      const file = new Blob([res.data], { type: (res.headers['content-type'] as string) || undefined });
       const fileURL = URL.createObjectURL(file);
       const fileLink = document.createElement('a');
       fileLink.href = fileURL;

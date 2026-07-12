@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { getChallenges, createChallenge, updateChallengeStatus, getCategories, joinChallenge, getChallengeParticipations, approveChallengeParticipation } from '../../services/api';
-import { Challenge, Category, ChallengeParticipation } from '../../types';
+import type { Challenge, Category, ChallengeParticipation } from '../../types';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { DataTable } from '../../components/ui/DataTable';
 import { Modal } from '../../components/ui/Modal';
 import { StatusBadge } from '../../components/ui/StatusBadge';
 import { useAuth } from '../../context/AuthContext';
-import { Plus, Check, X, Award } from 'lucide-react';
+import { Plus, Check, X } from 'lucide-react';
 
 export const Challenges: React.FC = () => {
   const { isAdmin } = useAuth();
