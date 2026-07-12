@@ -1,6 +1,12 @@
 -- EcoSphere ESG Platform - Seed Data
 -- Run this AFTER the schema migration
 
+-- Clean existing seeded data to prevent duplicates or unique constraint violations
+TRUNCATE TABLE carbon_transactions, employee_participations, challenge_participations, 
+               policy_acknowledgements, compliance_issues, department_scores, 
+               environmental_goals, csr_activities, challenges, departments, 
+               categories, emission_factors, esg_policies, badges, rewards CASCADE;
+
 -- ============================================
 -- DEPARTMENTS
 -- ============================================
