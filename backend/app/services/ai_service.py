@@ -8,11 +8,15 @@ class AIService:
     def __init__(self):
         api_key = os.getenv("OPENAI_API_KEY")
         if not api_key:
-            raise ValueError("OPENAI_API_KEY not found in environment variables")
-        self.client = AsyncOpenAI(api_key=api_key)
+            print("WARNING: OPENAI_API_KEY not found in environment variables. AI features will be disabled.")
+            self.client = None
+        else:
+            self.client = AsyncOpenAI(api_key=api_key)
 
     async def get_chat_response(self, prompt: str) -> str:
         """Get a text response from the AI."""
+        if not self.client:
+            return "AI service is currently unavailable: OPENAI_API_KEY is not configured."
         try:
             response = await self.client.chat.completions.create(
                 model="gpt-4o-mini",
@@ -27,6 +31,8 @@ class AIService:
 
     async def process_voice_input(self, audio_content: bytes) -> str:
         """Process audio input and return transcribed text."""
+        if not self.client:
+            return "AI service is currently unavailable: OPENAI_API_KEY is not configured."
         try:
             # OpenAI Whisper API requires a file-like object
             import io
@@ -43,6 +49,8 @@ class AIService:
 
     async def generate_voice_output(self, text: str) -> bytes:
         """Generate audio output from text."""
+        if not self.client:
+            return b""
         try:
             response = await self.client.audio.speech.create(
                 model="tts-1",
