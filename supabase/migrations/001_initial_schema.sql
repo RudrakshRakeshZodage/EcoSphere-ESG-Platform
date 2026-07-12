@@ -325,68 +325,100 @@ ALTER TABLE employee_badges ENABLE ROW LEVEL SECURITY;
 ALTER TABLE reward_redemptions ENABLE ROW LEVEL SECURITY;
 
 -- Profiles: users can read all profiles, update only their own
+DROP POLICY IF EXISTS "Profiles are viewable by everyone" ON profiles;
 CREATE POLICY "Profiles are viewable by everyone" ON profiles FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Users can update own profile" ON profiles;
 CREATE POLICY "Users can update own profile" ON profiles FOR UPDATE USING (auth.uid() = id);
 
 -- Notifications: users see only their own
+DROP POLICY IF EXISTS "Users see own notifications" ON notifications;
 CREATE POLICY "Users see own notifications" ON notifications FOR SELECT USING (auth.uid() = user_id);
+DROP POLICY IF EXISTS "Users update own notifications" ON notifications;
 CREATE POLICY "Users update own notifications" ON notifications FOR UPDATE USING (auth.uid() = user_id);
 
 -- Public read tables (no RLS needed for these - anyone authenticated can read)
 ALTER TABLE departments ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Departments viewable by all" ON departments;
 CREATE POLICY "Departments viewable by all" ON departments FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Admins manage departments" ON departments;
 CREATE POLICY "Admins manage departments" ON departments FOR ALL USING (true);
 
 ALTER TABLE categories ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Categories viewable by all" ON categories;
 CREATE POLICY "Categories viewable by all" ON categories FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Admins manage categories" ON categories;
 CREATE POLICY "Admins manage categories" ON categories FOR ALL USING (true);
 
 ALTER TABLE emission_factors ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "EF viewable by all" ON emission_factors;
 CREATE POLICY "EF viewable by all" ON emission_factors FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Admins manage EF" ON emission_factors;
 CREATE POLICY "Admins manage EF" ON emission_factors FOR ALL USING (true);
 
 ALTER TABLE carbon_transactions ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "CT viewable by all" ON carbon_transactions;
 CREATE POLICY "CT viewable by all" ON carbon_transactions FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Admins manage CT" ON carbon_transactions;
 CREATE POLICY "Admins manage CT" ON carbon_transactions FOR ALL USING (true);
 
 ALTER TABLE environmental_goals ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Goals viewable by all" ON environmental_goals;
 CREATE POLICY "Goals viewable by all" ON environmental_goals FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Admins manage goals" ON environmental_goals;
 CREATE POLICY "Admins manage goals" ON environmental_goals FOR ALL USING (true);
 
 ALTER TABLE esg_policies ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Policies viewable by all" ON esg_policies;
 CREATE POLICY "Policies viewable by all" ON esg_policies FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Admins manage policies" ON esg_policies;
 CREATE POLICY "Admins manage policies" ON esg_policies FOR ALL USING (true);
 
 ALTER TABLE badges ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Badges viewable by all" ON badges;
 CREATE POLICY "Badges viewable by all" ON badges FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Admins manage badges" ON badges;
 CREATE POLICY "Admins manage badges" ON badges FOR ALL USING (true);
 
 ALTER TABLE rewards ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Rewards viewable by all" ON rewards;
 CREATE POLICY "Rewards viewable by all" ON rewards FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Admins manage rewards" ON rewards;
 CREATE POLICY "Admins manage rewards" ON rewards FOR ALL USING (true);
 
 ALTER TABLE csr_activities ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "CSR viewable by all" ON csr_activities;
 CREATE POLICY "CSR viewable by all" ON csr_activities FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Admins manage CSR" ON csr_activities;
 CREATE POLICY "Admins manage CSR" ON csr_activities FOR ALL USING (true);
 
 ALTER TABLE challenges ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Challenges viewable by all" ON challenges;
 CREATE POLICY "Challenges viewable by all" ON challenges FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Admins manage challenges" ON challenges;
 CREATE POLICY "Admins manage challenges" ON challenges FOR ALL USING (true);
 
 ALTER TABLE audits ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Audits viewable by all" ON audits;
 CREATE POLICY "Audits viewable by all" ON audits FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Admins manage audits" ON audits;
 CREATE POLICY "Admins manage audits" ON audits FOR ALL USING (true);
 
 ALTER TABLE compliance_issues ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Issues viewable by all" ON compliance_issues;
 CREATE POLICY "Issues viewable by all" ON compliance_issues FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Admins manage issues" ON compliance_issues;
 CREATE POLICY "Admins manage issues" ON compliance_issues FOR ALL USING (true);
 
 ALTER TABLE department_scores ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Scores viewable by all" ON department_scores;
 CREATE POLICY "Scores viewable by all" ON department_scores FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Admins manage scores" ON department_scores;
 CREATE POLICY "Admins manage scores" ON department_scores FOR ALL USING (true);
 
 ALTER TABLE esg_settings ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Settings viewable by all" ON esg_settings;
 CREATE POLICY "Settings viewable by all" ON esg_settings FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Admins manage settings" ON esg_settings;
 CREATE POLICY "Admins manage settings" ON esg_settings FOR ALL USING (true);
 
 -- Insert default settings
