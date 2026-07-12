@@ -47,14 +47,15 @@ async def get_current_user(
             # Auto-create profile row if it is missing
             email = payload.get("email", "employee@ecosphere.com")
             full_name = email.split("@")[0].capitalize()
-            role = "admin" if email == "admin@gmail.com" else "employee"
+            role = "admin" if email in ["admin@gmail.com", "edupulse.work@gmail.com"] else "employee"
+            xp_val = 1200 if role == "admin" else 0
             new_profile = {
                 "id": user_id,
                 "full_name": full_name,
                 "email": email,
                 "role": role,
-                "xp": 0,
-                "points": 0
+                "xp": xp_val,
+                "points": xp_val
             }
             try:
                 insert_res = supabase.table("profiles").insert(new_profile).execute()
@@ -68,7 +69,20 @@ async def get_current_user(
                 detail="User profile not found",
             )
 
-        return result.data[0]
+        profile = result.data[0]
+        # Auto-seed existing admin profile if XP is 0
+        if profile.get("role") == "admin" and profile.get("xp", 0) == 0:
+            try:
+                update_res = supabase.table("profiles").update({
+                    "xp": 1200,
+                    "points": 1200
+                }).eq("id", user_id).execute()
+                if update_res.data:
+                    profile = update_res.data[0]
+            except Exception as e:
+                print("Failed to auto-seed admin profile XP:", e)
+
+        return profile
 
     except JWTError:
         raise HTTPException(
