@@ -1,11 +1,21 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MessageSquare, X, Send, Sparkles } from 'lucide-react';
+import { MessageSquare, X, Send, Sparkles, Mic, MicOff, Volume2, VolumeX } from 'lucide-react';
 import { queryChatbot } from '../../services/api';
 
 interface Message {
   sender: 'bot' | 'user';
   text: string;
   timestamp: Date;
+}
+
+// Inbuilt Browser Web Speech API definitions
+const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+const recognition = SpeechRecognition ? new SpeechRecognition() : null;
+
+if (recognition) {
+  recognition.continuous = false;
+  recognition.interimResults = false;
+  recognition.lang = 'en-US';
 }
 
 export const EsgChatbot: React.FC = () => {
@@ -19,6 +29,8 @@ export const EsgChatbot: React.FC = () => {
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [isSoundOn, setIsSoundOn] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -26,6 +38,56 @@ export const EsgChatbot: React.FC = () => {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Handle Text-To-Speech (TTS) response
+  const speakText = (text: string) => {
+    if (!isSoundOn || !window.speechSynthesis) return;
+    
+    // Cancel any current speaking
+    window.speechSynthesis.cancel();
+    
+    // Clean markdown characters from speaking text for natural voice
+    const cleanText = text.replace(/[*#`•👤📦🌱⚠️✅]/g, '');
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    window.speechSynthesis.speak(utterance);
+  };
+
+  // Speech-To-Text (STT) listeners
+  useEffect(() => {
+    if (!recognition) return;
+
+    recognition.onstart = () => {
+      setIsListening(true);
+    };
+
+    recognition.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      setInput(transcript);
+    };
+
+    recognition.onerror = (event: any) => {
+      console.error('Speech recognition error:', event.error);
+      setIsListening(false);
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+  }, []);
+
+  const toggleListening = () => {
+    if (!recognition) {
+      alert('Speech recognition is not supported in this browser. Try Google Chrome.');
+      return;
+    }
+
+    if (isListening) {
+      recognition.stop();
+    } else {
+      setInput('');
+      recognition.start();
+    }
+  };
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,16 +102,14 @@ export const EsgChatbot: React.FC = () => {
       const res = await queryChatbot(userMsg);
       const answer = res.data?.answer || "Sorry, I encountered an issue querying the database.";
       setMessages((prev) => [...prev, { sender: 'bot', text: answer, timestamp: new Date() }]);
+      
+      // Read bot response aloud
+      speakText(answer);
     } catch (err: any) {
       console.error('Error sending query to chatbot API:', err);
-      setMessages((prev) => [
-        ...prev,
-        { 
-          sender: 'bot', 
-          text: "I couldn't contact the ESG database router. Please make sure the backend API is running.", 
-          timestamp: new Date() 
-        }
-      ]);
+      const failMsg = "I couldn't contact the ESG database router. Please make sure the backend API is running.";
+      setMessages((prev) => [...prev, { sender: 'bot', text: failMsg, timestamp: new Date() }]);
+      speakText(failMsg);
     } finally {
       setLoading(false);
     }
@@ -133,15 +193,33 @@ export const EsgChatbot: React.FC = () => {
               </div>
               <div>
                 <h3 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#fff', margin: 0 }}>EcoBot</h3>
-                <span style={{ fontSize: '0.75rem', color: '#10b981', fontWeight: 600 }}>Real-Time ESG Advisor</span>
+                <span style={{ fontSize: '0.75rem', color: '#10b981', fontWeight: 600 }}>Real-Time Voice Advisor</span>
               </div>
             </div>
-            <button
-              onClick={() => setIsOpen(false)}
-              style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
-            >
-              <X size={18} />
-            </button>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              {/* Voice Sound Toggle Button */}
+              <button
+                onClick={() => {
+                  const newState = !isSoundOn;
+                  setIsSoundOn(newState);
+                  if (!newState && window.speechSynthesis) {
+                    window.speechSynthesis.cancel();
+                  }
+                }}
+                title={isSoundOn ? "Turn Voice Responses Off" : "Turn Voice Responses On"}
+                style={{ background: 'none', border: 'none', color: isSoundOn ? '#34d399' : 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+              >
+                {isSoundOn ? <Volume2 size={18} /> : <VolumeX size={18} />}
+              </button>
+
+              <button
+                onClick={() => setIsOpen(false)}
+                style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+              >
+                <X size={18} />
+              </button>
+            </div>
           </div>
 
           {/* Messages Area */}
@@ -201,13 +279,38 @@ export const EsgChatbot: React.FC = () => {
               background: 'rgba(15, 23, 42, 0.8)',
               display: 'flex',
               gap: '10px',
+              alignItems: 'center'
             }}
           >
+            {/* STT Speech Microphone Button */}
+            <button
+              type="button"
+              onClick={toggleListening}
+              title={isListening ? "Listening... Click to stop" : "Speak to Chatbot"}
+              style={{
+                width: '36px',
+                height: '36px',
+                borderRadius: '8px',
+                background: isListening ? '#ef4444' : 'rgba(255, 255, 255, 0.04)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                color: '#fff',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'background 0.3s ease',
+                animation: isListening ? 'pulse 1.5s infinite' : 'none'
+              }}
+            >
+              {isListening ? <MicOff size={16} /> : <Mic size={16} />}
+            </button>
+
             <input
               type="text"
-              placeholder="Ask me about laptop carbon or Nidhi's XP..."
+              placeholder={isListening ? "Listening... Speak now" : "Ask laptop carbon or Nidhi's XP..."}
               value={input}
               onChange={(e) => setInput(e.target.value)}
+              disabled={isListening}
               style={{
                 flex: 1,
                 backgroundColor: 'rgba(255, 255, 255, 0.03)',
@@ -219,9 +322,10 @@ export const EsgChatbot: React.FC = () => {
                 fontSize: '0.85rem',
               }}
             />
+            
             <button
               type="submit"
-              disabled={!input.trim() || loading}
+              disabled={!input.trim() || loading || isListening}
               style={{
                 width: '36px',
                 height: '36px',
@@ -233,7 +337,7 @@ export const EsgChatbot: React.FC = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                opacity: !input.trim() || loading ? 0.5 : 1,
+                opacity: !input.trim() || loading || isListening ? 0.5 : 1,
               }}
             >
               <Send size={16} />
