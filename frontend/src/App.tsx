@@ -6,6 +6,7 @@ import { Login } from './pages/auth/Login';
 import { Signup } from './pages/auth/Signup';
 import { Dashboard } from './pages/Dashboard';
 import { EmissionFactors } from './pages/environmental/EmissionFactors';
+import { ProductProfiles } from './pages/environmental/ProductProfiles';
 import { CarbonTransactions } from './pages/environmental/CarbonTransactions';
 import { Goals } from './pages/environmental/Goals';
 import { CsrActivities } from './pages/social/CsrActivities';
@@ -47,6 +48,7 @@ function AppRoutes() {
       
       {/* Environmental */}
       <Route path="/environmental/emission-factors" element={<ProtectedRoute><EmissionFactors /></ProtectedRoute>} />
+      <Route path="/environmental/product-profiles" element={<ProtectedRoute><ProductProfiles /></ProtectedRoute>} />
       <Route path="/environmental/carbon-transactions" element={<ProtectedRoute><CarbonTransactions /></ProtectedRoute>} />
       <Route path="/environmental/goals" element={<ProtectedRoute><Goals /></ProtectedRoute>} />
 

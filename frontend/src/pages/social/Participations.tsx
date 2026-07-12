@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getParticipations, approveParticipation } from '../../services/api';
-import { EmployeeParticipation } from '../../types';
+import type { EmployeeParticipation } from '../../types';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { DataTable } from '../../components/ui/DataTable';

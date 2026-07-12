@@ -46,6 +46,11 @@ export const createEmissionFactor = (data: Record<string, unknown>) => api.post(
 export const updateEmissionFactor = (id: string, data: Record<string, unknown>) => api.put(`/environmental/emission-factors/${id}`, data);
 export const deleteEmissionFactor = (id: string) => api.delete(`/environmental/emission-factors/${id}`);
 
+export const getProductProfiles = () => api.get('/products');
+export const createProductProfile = (data: Record<string, unknown>) => api.post('/products', data);
+export const updateProductProfile = (id: string, data: Record<string, unknown>) => api.put(`/products/${id}`, data);
+export const deleteProductProfile = (id: string) => api.delete(`/products/${id}`);
+
 export const getCarbonTransactions = (params?: Record<string, string>) => api.get('/environmental/carbon-transactions', { params });
 export const createCarbonTransaction = (data: Record<string, unknown>) => api.post('/environmental/carbon-transactions', data);
 

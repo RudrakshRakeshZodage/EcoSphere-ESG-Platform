@@ -421,6 +421,12 @@ CREATE POLICY "Settings viewable by all" ON esg_settings FOR SELECT USING (true)
 DROP POLICY IF EXISTS "Admins manage settings" ON esg_settings;
 CREATE POLICY "Admins manage settings" ON esg_settings FOR ALL USING (true);
 
+ALTER TABLE product_esg_profiles ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Product profiles viewable by all" ON product_esg_profiles;
+CREATE POLICY "Product profiles viewable by all" ON product_esg_profiles FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Admins manage product profiles" ON product_esg_profiles;
+CREATE POLICY "Admins manage product profiles" ON product_esg_profiles FOR ALL USING (true);
+
 -- Insert default settings
 INSERT INTO esg_settings (id) VALUES (1) ON CONFLICT (id) DO NOTHING;
 

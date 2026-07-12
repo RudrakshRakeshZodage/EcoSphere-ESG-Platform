@@ -223,3 +223,13 @@ export interface DashboardData {
   emission_trend: Record<string, number>;
   goals: EnvironmentalGoal[];
 }
+
+export interface ProductESGProfile {
+  id: string;
+  product_name: string;
+  carbon_footprint: number | null;
+  recyclability_score: number | null;
+  sustainability_rating: string | null;
+  notes: string | null;
+  created_at: string;
+}

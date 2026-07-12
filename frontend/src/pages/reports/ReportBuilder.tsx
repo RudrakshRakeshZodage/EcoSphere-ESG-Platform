@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { generateReport, getDepartments } from '../../services/api';
-import type { Department, Challenge, UserProfile } from '../../types';
+import type { Department, UserProfile } from '../../types';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { supabase } from '../../services/supabaseClient';
@@ -18,7 +18,7 @@ export const ReportBuilder: React.FC = () => {
   const [dateTo, setDateTo] = useState('');
   const [module, setModule] = useState('');
   const [employeeId, setEmployeeId] = useState('');
-  const [challengeId, setChallengeId] = useState('');
+  const challengeId = '';
 
   useEffect(() => {
     const fetchMetadata = async () => {

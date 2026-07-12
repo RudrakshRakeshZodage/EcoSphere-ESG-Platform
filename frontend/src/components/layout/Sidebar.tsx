@@ -21,6 +21,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
       section: 'Environmental',
       items: [
         { name: 'Emission Factors', path: '/environmental/emission-factors', icon: Leaf },
+        { name: 'Product ESG Profiles', path: '/environmental/product-profiles', icon: Leaf },
         { name: 'Carbon Transactions', path: '/environmental/carbon-transactions', icon: TrendingUp },
         { name: 'Goals', path: '/environmental/goals', icon: Activity },
       ]

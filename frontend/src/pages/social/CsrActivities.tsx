@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getCSRActivities, createCSRActivity, deleteCSRActivity, getCategories, getDepartments, createParticipation, getSettings } from '../../services/api';
-import { CSRActivity, Category, Department } from '../../types';
+import type { CSRActivity, Category, Department } from '../../types';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { DataTable } from '../../components/ui/DataTable';
@@ -10,7 +10,7 @@ import { useAuth } from '../../context/AuthContext';
 import { Plus } from 'lucide-react';
 
 export const CsrActivities: React.FC = () => {
-  const { profile, isAdmin } = useAuth();
+  const { isAdmin } = useAuth();
   const [activities, setActivities] = useState<CSRActivity[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [departments, setDepartments] = useState<Department[]>([]);
@@ -25,7 +25,7 @@ export const CsrActivities: React.FC = () => {
   const [categoryId, setCategoryId] = useState('');
   const [departmentId, setDepartmentId] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
-  const [maxParticipants, setMaxParticipants] = useState(50);
+  const [maxParticipants] = useState(50);
   const [pointsReward, setPointsReward] = useState(100);
 
   // Participate Proof state

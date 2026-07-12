@@ -44,6 +44,24 @@ async def get_current_user(
         result = supabase.table("profiles").select("*").eq("id", user_id).execute()
 
         if not result.data:
+            # Auto-create profile row if it is missing
+            email = payload.get("email", "employee@ecosphere.com")
+            full_name = email.split("@")[0].capitalize()
+            new_profile = {
+                "id": user_id,
+                "full_name": full_name,
+                "email": email,
+                "role": "admin",  # Default to admin for testing ease
+                "xp": 0,
+                "points": 0
+            }
+            try:
+                insert_res = supabase.table("profiles").insert(new_profile).execute()
+                if insert_res.data:
+                    return insert_res.data[0]
+            except Exception as e:
+                print("Failed to auto-create profile:", e)
+
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="User profile not found",

@@ -3,7 +3,7 @@ import { getDiversityMetrics } from '../../services/api';
 import { Card } from '../../components/ui/Card';
 import { StatCard } from '../../components/ui/StatCard';
 import { DataTable } from '../../components/ui/DataTable';
-import { Users, ShieldAlert, Activity } from 'lucide-react';
+import { Users, Activity } from 'lucide-react';
 
 export const DiversityMetrics: React.FC = () => {
   const [metrics, setMetrics] = useState<any>(null);

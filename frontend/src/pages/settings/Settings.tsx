@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getSettings, updateSettings, createDepartment, createCategory } from '../../services/api';
-import type { ESGSettings, Department, Category } from '../../types';
+import type { ESGSettings } from '../../types';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { useAuth } from '../../context/AuthContext';
