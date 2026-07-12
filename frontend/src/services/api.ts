@@ -177,4 +177,9 @@ export const markAllRead = () => mutatingPut('/notifications/read-all');
 export const getSettings = () => cachedGet('/settings');
 export const updateSettings = (data: Record<string, unknown>) => mutatingPut('/settings', data);
 
+// ============================================
+// Chatbot
+// ============================================
+export const queryChatbot = (message: string) => api.post('/chatbot/query', { message });
+
 export default api;

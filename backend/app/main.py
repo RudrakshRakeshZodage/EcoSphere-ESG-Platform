@@ -15,6 +15,7 @@ from app.routers import (
     notifications,
     settings as settings_router,
     products,
+    chatbot,
 )
 
 app = FastAPI(
@@ -51,6 +52,7 @@ app.include_router(reports.router, prefix="/api/reports", tags=["Reports"])
 app.include_router(notifications.router, prefix="/api/notifications", tags=["Notifications"])
 app.include_router(settings_router.router, prefix="/api/settings", tags=["Settings"])
 app.include_router(products.router, prefix="/api/products", tags=["Products"])
+app.include_router(chatbot.router, prefix="/api/chatbot", tags=["Chatbot"])
 
 
 @app.get("/api/health")

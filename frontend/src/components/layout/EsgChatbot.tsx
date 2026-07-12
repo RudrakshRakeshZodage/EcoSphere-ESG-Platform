@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MessageSquare, X, Send, Sparkles } from 'lucide-react';
-import { getProductProfiles, getLeaderboard, getComplianceIssues } from '../../services/api';
+import { queryChatbot } from '../../services/api';
 
 interface Message {
   sender: 'bot' | 'user';
@@ -19,11 +19,6 @@ export const EsgChatbot: React.FC = () => {
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  
-  // Loaded database data for real-time answers
-  const [products, setProducts] = useState<any[]>([]);
-  const [leaderboard, setLeaderboard] = useState<any[]>([]);
-  const [issues, setIssues] = useState<any[]>([]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -31,27 +26,6 @@ export const EsgChatbot: React.FC = () => {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
-
-  // Load database context in real-time when chat is opened
-  useEffect(() => {
-    if (isOpen) {
-      const loadContext = async () => {
-        try {
-          const [prodRes, leadRes, issueRes] = await Promise.all([
-            getProductProfiles().catch(() => ({ data: { data: [] } })),
-            getLeaderboard().catch(() => ({ data: { data: [] } })),
-            getComplianceIssues().catch(() => ({ data: { data: [] } }))
-          ]);
-          setProducts(prodRes.data?.data || []);
-          setLeaderboard(leadRes.data?.data || []);
-          setIssues(issueRes.data?.data || []);
-        } catch (err) {
-          console.error('Error loading chatbot context:', err);
-        }
-      };
-      loadContext();
-    }
-  }, [isOpen]);
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,64 +36,23 @@ export const EsgChatbot: React.FC = () => {
     setInput('');
     setLoading(true);
 
-    // AI thinking timeout simulation
-    setTimeout(() => {
-      let botResponse = '';
-      const query = userMsg.toLowerCase();
-
-      // 1. Query Products
-      if (query.includes('product') || query.includes('laptop') || query.includes('phone') || query.includes('case') || query.includes('shirt') || query.includes('meter')) {
-        if (products.length > 0) {
-          const items = products.map(p => 
-            `• *${p.product_name}*: Carbon footprint of **${p.carbon_footprint} kg CO2e**, Recyclability: **${p.recyclability_score}%** (Rating: ${p.sustainability_rating || 'N/A'})`
-          ).join('\n');
-          botResponse = `Here are the product profiles currently logged in our database:\n\n${items}`;
-        } else {
-          botResponse = "No products found in the database. You can add them under Environmental -> Product ESG Profiles.";
+    try {
+      const res = await queryChatbot(userMsg);
+      const answer = res.data?.answer || "Sorry, I encountered an issue querying the database.";
+      setMessages((prev) => [...prev, { sender: 'bot', text: answer, timestamp: new Date() }]);
+    } catch (err: any) {
+      console.error('Error sending query to chatbot API:', err);
+      setMessages((prev) => [
+        ...prev,
+        { 
+          sender: 'bot', 
+          text: "I couldn't contact the ESG database router. Please make sure the backend API is running.", 
+          timestamp: new Date() 
         }
-      } 
-      // 2. Query Users / Leaderboard
-      else if (query.includes('user') || query.includes('employee') || query.includes('score') || query.includes('xp') || query.includes('leaderboard') || query.includes('points') || query.includes('nidhi') || query.includes('rudraksh')) {
-        if (leaderboard.length > 0) {
-          const rankList = leaderboard.slice(0, 5).map((l, idx) => 
-            `#${idx + 1} **${l.full_name}** - **${l.xp} XP** (${l.points} pts)`
-          ).join('\n');
-          botResponse = `Here is our current Top Employee Leaderboard rankings:\n\n${rankList}`;
-        } else {
-          botResponse = "No employee scores found in the database yet.";
-        }
-      }
-      // 3. Query Compliance / Governance
-      else if (query.includes('compliance') || query.includes('issue') || query.includes('audit') || query.includes('severity')) {
-        if (issues.length > 0) {
-          const openIssues = issues.filter(i => i.status !== 'Resolved');
-          if (openIssues.length > 0) {
-            const list = openIssues.map(i => 
-              `• **[${i.severity}]** ${i.description} (Owner: ${i.owner?.full_name || 'Unassigned'}, Due: ${i.due_date})`
-            ).join('\n');
-            botResponse = `We have **${openIssues.length} open compliance issues**:\n\n${list}`;
-          } else {
-            botResponse = "Excellent! All compliance issues are currently resolved in our system.";
-          }
-        } else {
-          botResponse = "No compliance issues found in the database.";
-        }
-      }
-      // 4. Query general ESG tips
-      else if (query.includes('improve') || query.includes('sustainability') || query.includes('help') || query.includes('esg')) {
-        botResponse = "To improve EcoSphere's ESG scores, consider these actions:\n\n" +
-          "1. 🔌 **Environmental**: Add solar panels and energy meters to reduce fleet/utility carbon emissions.\n" +
-          "2. 🤝 **Social**: Create new CSR activities and invite employees to participate to gain XP.\n" +
-          "3. 📜 **Governance**: Update core ESG policies and assign due dates to clear out compliance issues.";
-      }
-      // 5. Default
-      else {
-        botResponse = "I'm EcoBot, your ESG virtual assistant. You can ask me about carbon footprints of our products, employee XP levels, or ways to improve our corporate ESG standing!";
-      }
-
-      setMessages((prev) => [...prev, { sender: 'bot', text: botResponse, timestamp: new Date() }]);
+      ]);
+    } finally {
       setLoading(false);
-    }, 800);
+    }
   };
 
   return (
