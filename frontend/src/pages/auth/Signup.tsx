@@ -156,7 +156,15 @@ export const Signup: React.FC = () => {
         }
       }
       if (errMsg === '[object Object]' || errMsg === '{}') {
-        errMsg = 'Failed to sign up. Please check your Supabase Auth settings.';
+        const errorDetails = err ? {
+          name: err.name,
+          message: err.message,
+          status: err.status,
+          code: err.code,
+          details: err.details,
+          hint: err.hint
+        } : null;
+        errMsg = `Signup Error: ${JSON.stringify(errorDetails)}`;
       }
       setError(errMsg);
     } finally {
