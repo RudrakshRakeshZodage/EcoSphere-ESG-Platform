@@ -24,10 +24,31 @@ async def chat_query(query: ChatQuery, current_user: dict = Depends(get_current_
     transactions = supabase.table("carbon_transactions").select("*").execute().data or []
 
     # 2. Dynamic matching logic
-    # Check for specific user query
+    # Check for user count queries
+    if any(k in msg for k in ["how many users", "number of users", "total users", "all users", "count of users", "how many employees", "total employees"]):
+        names = "\n".join([f"• **{p['full_name']}** ({p['email']}) - {p['xp']} XP" for p in profiles])
+        return {
+            "answer": f"👥 **EcoSphere Database Users (Real-Time):**\nWe have **{len(profiles)} registered users** in our system:\n\n{names}"
+        }
+
+    # Check for specific user queries (fuzzy/partial matching)
     for p in profiles:
         name = p.get("full_name", "").lower()
-        if name in msg and len(name) > 3:
+        # Split names or match substring/prefixes
+        matched = False
+        if name in msg:
+            matched = True
+        elif "rudraksh" in msg and "rudraksh" in name:
+            matched = True
+        elif "nidhi" in msg and "nidhi" in name:
+            matched = True
+        else:
+            # Check if any word in the full name matches a word in the message
+            parts = name.replace("@", " ").replace(".", " ").split()
+            if any(part in msg for part in parts if len(part) >= 4):
+                matched = True
+
+        if matched:
             dept = p.get("departments", {}).get("name", "N/A") if p.get("departments") else "N/A"
             return {
                 "answer": f"👤 **Employee Profile Found (Real-Time):**\n• Name: **{p['full_name']}**\n• Email: {p['email']}\n• Role: {p['role'].capitalize()}\n• Department: {dept}\n• Score: **{p['xp']} XP**\n• Redeemable Balance: **{p['points']} points**"
@@ -42,7 +63,7 @@ async def chat_query(query: ChatQuery, current_user: dict = Depends(get_current_
             }
 
     # Check for aggregate carbon queries
-    if any(k in msg for k in ["total emission", "carbon emission", "co2", "carbon footprint", "transaction"]):
+    if any(k in msg for k in ["total emission", "carbon emission", "co2", "carbon footprint", "transaction", "emissions"]):
         total_emissions = sum(float(t.get("calculated_emission", 0)) for t in transactions)
         avg_emissions = total_emissions / len(transactions) if transactions else 0
         return {
