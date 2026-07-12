@@ -182,4 +182,12 @@ export const updateSettings = (data: Record<string, unknown>) => mutatingPut('/s
 // ============================================
 export const queryChatbot = (message: string) => api.post('/chatbot/query', { message });
 
-export default api;
+// ============================================
+// AI Agent
+// ============================================
+export const chatWithAI = (message: string) => api.post('/ai/chat', { message });
+export const voiceChatWithAI = (formData: FormData) => api.post('/ai/voice-chat', formData, {
+  headers: { 'Content-Type': 'multipart/form-data' },
+});
+export const textToSpeech = (message: string) => api.post('/ai/text-to-speech', { message }, { responseType: 'blob' });
+

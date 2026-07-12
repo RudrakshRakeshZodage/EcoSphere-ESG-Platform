@@ -23,6 +23,7 @@ import { Rewards } from './pages/gamification/Rewards';
 import { Leaderboard } from './pages/gamification/Leaderboard';
 import { ReportBuilder } from './pages/reports/ReportBuilder';
 import { Settings } from './pages/settings/Settings';
+import AIChat from './components/ai/AIChat';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { session, loading } = useAuth();
@@ -35,7 +36,12 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
     return <Navigate to="/login" replace />;
   }
 
-  return <Layout>{children}</Layout>;
+  return (
+    <>
+      <Layout>{children}</Layout>
+      <AIChat onToggle={() => {}} />
+    </>
+  );
 };
 
 function AppRoutes() {

@@ -42,6 +42,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ isOpen, on
     if (isOpen) {
       fetchNotifications();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   const markAsRead = async (id: string) => {

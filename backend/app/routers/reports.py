@@ -86,7 +86,7 @@ async def _get_environmental_data(supabase, request):
 
 async def _get_social_data(supabase, request):
     query = supabase.table("employee_participations").select(
-        "*, profiles(full_name), csr_activities(title, date)"
+        "*, profiles!employee_participations_employee_id_fkey(full_name), csr_activities(title, date)"
     )
     if request.employee_id:
         query = query.eq("employee_id", request.employee_id)
