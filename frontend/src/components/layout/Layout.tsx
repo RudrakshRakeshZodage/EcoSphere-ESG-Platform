@@ -59,7 +59,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       />
 
       {/* Floating AI ESG Advisor Chatbot */}
-      <EsgChatbot />
+      {isAdmin && <EsgChatbot />}
     </div>
   );
 };
