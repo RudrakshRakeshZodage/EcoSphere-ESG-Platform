@@ -21,6 +21,11 @@ async def signup_user(req: SignupRequest):
     """Register a new user and auto-confirm email using Admin Auth client."""
     supabase = get_supabase_client()
     
+    # Check if a user with this email already exists in the profiles table
+    existing_profile = supabase.table("profiles").select("id").eq("email", req.email).execute()
+    if existing_profile.data and len(existing_profile.data) > 0:
+        raise HTTPException(status_code=400, detail="An account with this email address already exists.")
+    
     user_data = {
         "email": req.email,
         "password": req.password,
