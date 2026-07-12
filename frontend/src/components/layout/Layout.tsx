@@ -3,12 +3,14 @@ import { Sidebar } from './Sidebar';
 import { Header } from './Header';
 import { NotificationPanel } from '../notifications/NotificationPanel';
 import { EsgChatbot } from './EsgChatbot';
+import { useAuth } from '../../context/AuthContext';
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
+  const { isAdmin } = useAuth();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -57,7 +59,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       />
 
       {/* Floating AI ESG Advisor Chatbot */}
-      <EsgChatbot />
+      {isAdmin && <EsgChatbot />}
     </div>
   );
 };
