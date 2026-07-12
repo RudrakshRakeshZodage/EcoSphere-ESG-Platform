@@ -12,6 +12,21 @@ interface SidebarProps {
   setCollapsed: (val: boolean) => void;
 }
 
+const EcoLogo: React.FC<{ size?: number }> = ({ size = 32 }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ filter: 'drop-shadow(0 0 8px rgba(16, 185, 129, 0.5))' }}>
+    <defs>
+      <linearGradient id="logo-grad-sidebar" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#34d399" />
+        <stop offset="50%" stopColor="#10b981" />
+        <stop offset="100%" stopColor="#059669" />
+      </linearGradient>
+    </defs>
+    <circle cx="50" cy="50" r="45" stroke="url(#logo-grad-sidebar)" strokeWidth="6" strokeDasharray="3 3" opacity="0.3" />
+    <path d="M50 15C30.67 15 15 30.67 15 50C15 63.8 22.99 75.76 34.6 81.56C34.85 81.68 35.15 81.65 35.37 81.48C35.59 81.3 35.7 81.02 35.68 80.74C35.1 73.18 39.2 65.85 45.9 62.43C48.47 61.12 51.53 61.12 54.1 62.43C60.8 65.85 64.9 73.18 64.32 80.74C64.3 81.02 64.41 81.3 64.63 81.48C64.85 81.65 65.15 81.68 65.4 81.56C77.01 75.76 85 63.8 85 50C85 30.67 69.33 15 50 15Z" fill="url(#logo-grad-sidebar)" />
+    <path d="M50 32C45.58 32 42 35.58 42 40C42 44.42 45.58 48 50 48C54.42 48 58 44.42 58 40C58 35.58 54.42 32 50 32Z" fill="#ffffff" />
+  </svg>
+);
+
 export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
   const { profile, signOut } = useAuth();
 
@@ -84,47 +99,58 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
       <div style={{
         padding: '24px 20px',
         display: 'flex',
+        flexDirection: collapsed ? 'column' : 'row',
+        gap: collapsed ? '12px' : '0',
         alignItems: 'center',
         justifyContent: collapsed ? 'center' : 'space-between',
         borderBottom: '1px solid var(--card-border)'
       }}>
-        {!collapsed && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{
-              width: '32px',
-              height: '32px',
-              borderRadius: '8px',
-              background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: 'bold',
-              color: '#fff',
-              boxShadow: '0 0 15px rgba(16, 185, 129, 0.4)'
-            }}>
-              ES
+        {collapsed ? (
+          <>
+            <EcoLogo size={32} />
+            <button 
+              onClick={() => setCollapsed(!collapsed)}
+              style={{
+                background: 'rgba(255,255,255,0.05)',
+                border: 'none',
+                color: 'var(--text-secondary)',
+                borderRadius: '6px',
+                width: '32px',
+                height: '32px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <ChevronRight size={18} />
+            </button>
+          </>
+        ) : (
+          <>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <EcoLogo size={32} />
+              <span style={{ fontWeight: 800, letterSpacing: '0.5px', fontSize: '1.2rem', color: '#fff' }}>
+                EcoSphere
+              </span>
             </div>
-            <span style={{ fontWeight: 800, letterSpacing: '0.5px', fontSize: '1.2rem', color: '#fff' }}>
-              EcoSphere
-            </span>
-          </div>
+            <button 
+              onClick={() => setCollapsed(!collapsed)}
+              style={{
+                background: 'rgba(255,255,255,0.05)',
+                border: 'none',
+                color: 'var(--text-secondary)',
+                borderRadius: '6px',
+                width: '32px',
+                height: '32px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <ChevronLeft size={18} />
+            </button>
+          </>
         )}
-        <button 
-          onClick={() => setCollapsed(!collapsed)}
-          style={{
-            background: 'rgba(255,255,255,0.05)',
-            border: 'none',
-            color: 'var(--text-secondary)',
-            borderRadius: '6px',
-            width: '32px',
-            height: '32px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
-        >
-          {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
-        </button>
       </div>
 
       {/* Navigation Items */}
