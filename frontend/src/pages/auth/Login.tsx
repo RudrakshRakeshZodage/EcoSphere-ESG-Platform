@@ -372,20 +372,6 @@ export const Login: React.FC = () => {
             </Link>
           </div>
 
-          {/* Quick Access helper for Dev Testing */}
-          <div style={{
-            marginTop: '30px',
-            padding: '15px',
-            borderRadius: '8px',
-            background: 'rgba(255, 255, 255, 0.02)',
-            border: '1px solid rgba(255, 255, 255, 0.04)',
-            fontSize: '0.8rem',
-            color: 'var(--text-muted)'
-          }}>
-            <strong style={{ color: 'var(--text-secondary)' }}>Quick Dev Login:</strong>
-            <div style={{ marginTop: '5px' }}>Email: <code style={{ color: '#fff' }}>admin@ecosphere.com</code></div>
-            <div>Password: <code style={{ color: '#fff' }}>admin123</code></div>
-          </div>
         </Card>
       </div>
     </div>
