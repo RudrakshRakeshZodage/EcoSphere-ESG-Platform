@@ -47,11 +47,12 @@ async def get_current_user(
             # Auto-create profile row if it is missing
             email = payload.get("email", "employee@ecosphere.com")
             full_name = email.split("@")[0].capitalize()
+            role = "admin" if email == "admin@gmail.com" else "employee"
             new_profile = {
                 "id": user_id,
                 "full_name": full_name,
                 "email": email,
-                "role": "admin",  # Default to admin for testing ease
+                "role": role,
                 "xp": 0,
                 "points": 0
             }
