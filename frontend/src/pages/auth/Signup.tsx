@@ -87,31 +87,33 @@ export const Signup: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const { data, error: signupError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: fullName,
-            role: role,
-            department_id: departmentId
-          }
-        }
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/signup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          full_name: fullName,
+          role,
+          department_id: departmentId || null
+        })
       });
-      if (signupError) throw signupError;
 
-      // Update the user profile explicitly if trigger took time
-      if (data.user) {
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .update({
-            department_id: departmentId || null
-          })
-          .eq('id', data.user.id);
-        if (profileError) console.error('Profile update error:', profileError);
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.detail || 'Signup failed');
       }
 
-      navigate('/login');
+      // Automatically sign the user in since their email is pre-confirmed
+      const { error: loginError } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+      if (loginError) throw loginError;
+
+      navigate('/');
     } catch (err: any) {
       setError(err.message || 'Failed to sign up');
     } finally {

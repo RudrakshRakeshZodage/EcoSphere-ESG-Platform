@@ -2,7 +2,47 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.dependencies import get_current_user
 from app.supabase_client import get_supabase_client
 
+from pydantic import BaseModel
+from typing import Optional
+
 router = APIRouter()
+
+
+class SignupRequest(BaseModel):
+    email: str
+    password: str
+    full_name: str
+    role: str
+    department_id: Optional[str] = None
+
+
+@router.post("/signup")
+async def signup_user(req: SignupRequest):
+    """Register a new user and auto-confirm email using Admin Auth client."""
+    supabase = get_supabase_client()
+    
+    user_data = {
+        "email": req.email,
+        "password": req.password,
+        "email_confirm": True,
+        "user_metadata": {
+            "full_name": req.full_name,
+            "role": req.role,
+            "department_id": req.department_id
+        }
+    }
+    
+    try:
+        res = supabase.auth.admin.create_user(user_data)
+        if not res.user:
+            raise HTTPException(status_code=400, detail="Failed to create user account")
+        return {"message": "Account created successfully", "userId": res.user.id}
+    except Exception as e:
+        err_msg = str(e)
+        if "already exists" in err_msg or "already registered" in err_msg:
+            raise HTTPException(status_code=400, detail="An account with this email address already exists.")
+        raise HTTPException(status_code=400, detail=f"Signup failed: {err_msg}")
+
 
 
 @router.get("/profile")
