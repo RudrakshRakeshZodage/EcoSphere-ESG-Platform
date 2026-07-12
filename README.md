@@ -139,3 +139,4 @@ All data transactions are governed via **PostgreSQL Row Level Security (RLS)** t
 *   **Profiles**: Public reading; updates allowed only by owner or admins.
 *   **Carbon Ledger**: Selectable by anyone; mutable only by Admin roles.
 *   **Gamification Redemptions**: Handled via transaction locks to prevent double-spending points during reward redemptions.
+<!-- deploy trigger: 1 -->
