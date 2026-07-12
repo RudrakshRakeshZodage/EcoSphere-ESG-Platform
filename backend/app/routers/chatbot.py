@@ -96,5 +96,5 @@ async def chat_query(query: ChatQuery, current_user: dict = Depends(get_current_
 
     # Default fallback - general ESG guide
     return {
-        "answer": "I'm **EcoBot**, your real-time ESG Advisor. I search all tables in your Supabase database on the fly.\n\nTry asking me:\n• *'What is the footprint of Biodegradable Phone Case?'*\n• *'Show me Nidhi\\'s XP score'* \n• *'List open compliance issues'* \n• *'What are our total emissions?'*"
+        "answer": "Welcome to EcoBot! I am your real-time ESG Advisor. Ask me anything about our product profiles, employee scores, compliance issues, or carbon accounting!"
     }
