@@ -53,6 +53,8 @@ async def generate_report(
         return _generate_excel(data, title)
     elif request.format == "pdf":
         return _generate_pdf(data, title)
+    elif request.format == "json":
+        return {"data": data, "title": title}
     else:
         raise HTTPException(status_code=400, detail="Unsupported format")
 
@@ -211,6 +213,162 @@ def _generate_excel(data: list, title: str):
     )
 
 
+def _draw_environmental_chart(data: list):
+    from reportlab.graphics.shapes import Drawing, String
+    from reportlab.graphics.charts.barcharts import VerticalBarChart
+    from reportlab.lib import colors
+
+    # Group by department
+    dept_emissions = {}
+    for r in data:
+        dept = r.get("Department", "Unknown")
+        try:
+            emissions = float(r.get("Emission (kg CO2e)", 0))
+        except ValueError:
+            emissions = 0.0
+        dept_emissions[dept] = dept_emissions.get(dept, 0.0) + emissions
+    
+    if not dept_emissions:
+        return None
+
+    # Limit to top 5 departments for rendering space
+    sorted_depts = sorted(dept_emissions.items(), key=lambda x: x[1], reverse=True)[:5]
+    labels = [d[0] for d in sorted_depts]
+    values = [d[1] for d in sorted_depts]
+
+    d = Drawing(400, 160)
+    bc = VerticalBarChart()
+    bc.x = 40
+    bc.y = 20
+    bc.height = 110
+    bc.width = 320
+    bc.data = [values]
+    bc.categoryAxis.categoryNames = labels
+    bc.categoryAxis.labels.fontSize = 7
+    bc.categoryAxis.labels.dy = -10
+    bc.valueAxis.valueMin = 0
+    bc.valueAxis.valueMax = max(values) * 1.1 if values and max(values) > 0 else 100
+    bc.valueAxis.valueStep = max(values) / 4 if values and max(values) > 0 else 25
+    bc.valueAxis.labels.fontSize = 7
+    bc.bars[0].fillColor = colors.HexColor("#10B981") # Brand Green
+    
+    d.add(bc)
+    d.add(String(200, 145, "CO2 Emissions by Department (kg CO2e)", textAnchor='middle', fontSize=9, fontName='Helvetica-Bold'))
+    return d
+
+
+def _draw_social_chart(data: list):
+    from reportlab.graphics.shapes import Drawing, String
+    from reportlab.graphics.charts.piecharts import Pie
+    from reportlab.lib import colors
+
+    status_counts = {}
+    for r in data:
+        status = r.get("Status", "Pending")
+        status_counts[status] = status_counts.get(status, 0) + 1
+        
+    if not status_counts:
+        return None
+        
+    labels = list(status_counts.keys())
+    values = list(status_counts.values())
+    
+    d = Drawing(400, 160)
+    pc = Pie()
+    pc.x = 120
+    pc.y = 10
+    pc.width = 120
+    pc.height = 120
+    pc.data = values
+    pc.labels = [f"{l} ({v})" for l, v in zip(labels, values)]
+    pc.sideLabels = 1
+    
+    color_palette = [colors.HexColor("#10B981"), colors.HexColor("#EF4444"), colors.HexColor("#F59E0B")]
+    for i in range(len(values)):
+        pc.slices[i].fillColor = color_palette[i % len(color_palette)]
+        
+    d.add(pc)
+    d.add(String(200, 145, "CSR Participation Status Breakdown", textAnchor='middle', fontSize=9, fontName='Helvetica-Bold'))
+    return d
+
+
+def _draw_governance_chart(data: list):
+    from reportlab.graphics.shapes import Drawing, String
+    from reportlab.graphics.charts.piecharts import Pie
+    from reportlab.lib import colors
+
+    sev_counts = {}
+    for r in data:
+        sev = r.get("Severity", "Unknown")
+        sev_counts[sev] = sev_counts.get(sev, 0) + 1
+        
+    if not sev_counts:
+        return None
+        
+    labels = list(sev_counts.keys())
+    values = list(sev_counts.values())
+    
+    d = Drawing(400, 160)
+    pc = Pie()
+    pc.x = 120
+    pc.y = 10
+    pc.width = 120
+    pc.height = 120
+    pc.data = values
+    pc.labels = [f"{l} ({v})" for l, v in zip(labels, values)]
+    pc.sideLabels = 1
+    
+    color_palette = [colors.HexColor("#EF4444"), colors.HexColor("#F59E0B"), colors.HexColor("#3B82F6"), colors.HexColor("#10B981")]
+    for i in range(len(values)):
+        pc.slices[i].fillColor = color_palette[i % len(color_palette)]
+        
+    d.add(pc)
+    d.add(String(200, 145, "Compliance Issues by Severity", textAnchor='middle', fontSize=9, fontName='Helvetica-Bold'))
+    return d
+
+
+def _draw_esg_summary_chart(data: list):
+    from reportlab.graphics.shapes import Drawing, String
+    from reportlab.graphics.charts.barcharts import VerticalBarChart
+    from reportlab.lib import colors
+
+    dept_scores = {}
+    for r in data:
+        dept = r.get("Department", "Unknown")
+        try:
+            score = float(r.get("Total Score", 0))
+        except ValueError:
+            score = 0.0
+        dept_scores[dept] = score
+        
+    if not dept_scores:
+        return None
+        
+    sorted_depts = sorted(dept_scores.items(), key=lambda x: x[1], reverse=True)[:5]
+    labels = [d[0] for d in sorted_depts]
+    values = [d[1] for d in sorted_depts]
+    
+    d = Drawing(400, 160)
+    bc = VerticalBarChart()
+    bc.x = 40
+    bc.y = 20
+    bc.height = 110
+    bc.width = 320
+    bc.data = [values]
+    bc.categoryAxis.categoryNames = labels
+    bc.categoryAxis.labels.fontSize = 7
+    bc.categoryAxis.labels.dy = -10
+    bc.valueAxis.valueMin = 0
+    bc.valueAxis.valueMax = 100
+    bc.valueAxis.valueStep = 25
+    bc.valueAxis.labels.fontSize = 7
+    bc.bars[0].fillColor = colors.HexColor("#3B82F6") # Blue
+    
+    d.add(bc)
+    d.add(String(200, 145, "Total ESG Scores by Department", textAnchor='middle', fontSize=9, fontName='Helvetica-Bold'))
+    return d
+
+
 def _generate_pdf(data: list, title: str):
     from reportlab.lib.pagesizes import letter, landscape
     from reportlab.lib import colors
@@ -225,7 +383,23 @@ def _generate_pdf(data: list, title: str):
     # Title
     elements.append(Paragraph(f"<b>{title}</b>", styles["Title"]))
     elements.append(Paragraph(f"Generated: {date.today()}", styles["Normal"]))
-    elements.append(Spacer(1, 20))
+    elements.append(Spacer(1, 15))
+
+    # Add Chart to PDF
+    if data:
+        chart_drawing = None
+        if "Environmental" in title:
+            chart_drawing = _draw_environmental_chart(data)
+        elif "Social" in title:
+            chart_drawing = _draw_social_chart(data)
+        elif "Governance" in title:
+            chart_drawing = _draw_governance_chart(data)
+        elif "ESG Summary" in title:
+            chart_drawing = _draw_esg_summary_chart(data)
+
+        if chart_drawing:
+            elements.append(chart_drawing)
+            elements.append(Spacer(1, 15))
 
     if data:
         headers = list(data[0].keys())

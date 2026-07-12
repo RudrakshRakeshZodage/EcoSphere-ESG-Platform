@@ -1,5 +1,6 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
+import { clearCache } from '../../services/api';
 import { 
   LayoutDashboard, Leaf, Users, ShieldAlert, Award, 
   FileSpreadsheet, Settings, LogOut, ChevronLeft, ChevronRight,
@@ -29,6 +30,7 @@ const EcoLogo: React.FC<{ size?: number }> = ({ size = 32 }) => (
 
 export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
   const { profile, signOut } = useAuth();
+  const location = useLocation();
 
   const menuItems = [
     { name: 'Dashboard', path: '/', icon: LayoutDashboard },
@@ -185,6 +187,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
                     <NavLink
                       key={subItem.path}
                       to={subItem.path}
+                      onClick={() => {
+                        if (location.pathname === subItem.path) {
+                          clearCache();
+                          window.location.reload();
+                        }
+                      }}
                       style={({ isActive }) => ({
                         display: 'flex',
                         alignItems: 'center',
@@ -212,6 +220,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
               <NavLink
                 key={item.path}
                 to={item.path}
+                onClick={() => {
+                  if (location.pathname === item.path) {
+                    clearCache();
+                    window.location.reload();
+                  }
+                }}
                 style={({ isActive }) => ({
                   display: 'flex',
                   alignItems: 'center',
