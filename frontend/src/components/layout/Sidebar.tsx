@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { 
   LayoutDashboard, Leaf, Users, ShieldAlert, Award, 
   FileSpreadsheet, Settings, LogOut, ChevronLeft, ChevronRight,
-  TrendingUp, Activity, CheckSquare, Shield, HelpCircle
+  TrendingUp, Activity, CheckSquare, Shield
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -152,7 +152,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
                     {item.section}
                   </span>
                 )}
-                {item.items.map((subItem) => {
+                {item.items && item.items.map((subItem) => {
                   const Icon = subItem.icon;
                   return (
                     <NavLink

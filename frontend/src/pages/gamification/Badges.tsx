@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getBadges, getMyBadges, createBadge } from '../../services/api';
-import { Badge } from '../../types';
+import type { Badge } from '../../types';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Modal } from '../../components/ui/Modal';

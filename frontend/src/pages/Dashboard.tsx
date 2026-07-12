@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { getDashboard } from '../services/api';
-import { DashboardData } from '../types';
+import type { DashboardData } from '../types';
 import { StatCard } from '../components/ui/StatCard';
 import { Card } from '../components/ui/Card';
 import { DataTable } from '../components/ui/DataTable';
 import { 
-  Building, Leaf, Users, Shield, Trophy, Activity, AlertTriangle
+  Leaf, Users, Shield, Trophy
 } from 'lucide-react';
 import { Line } from 'react-chartjs-2';
 import {

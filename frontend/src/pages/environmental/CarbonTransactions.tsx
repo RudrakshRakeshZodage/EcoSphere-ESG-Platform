@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getCarbonTransactions, createCarbonTransaction, getDepartments, getEmissionFactors } from '../../services/api';
-import { CarbonTransaction, Department, EmissionFactor } from '../../types';
+import type { CarbonTransaction, Department, EmissionFactor } from '../../types';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { DataTable } from '../../components/ui/DataTable';

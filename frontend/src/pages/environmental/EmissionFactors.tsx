@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getEmissionFactors, createEmissionFactor, deleteEmissionFactor } from '../../services/api';
-import { EmissionFactor } from '../../types';
+import type { EmissionFactor } from '../../types';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { DataTable } from '../../components/ui/DataTable';

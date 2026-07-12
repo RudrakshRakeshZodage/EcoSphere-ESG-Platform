@@ -4,7 +4,7 @@ import { supabase } from '../../services/supabaseClient';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { getDepartments } from '../../services/api';
-import { Department } from '../../types';
+import type { Department } from '../../types';
 
 export const Signup: React.FC = () => {
   const [fullName, setFullName] = useState('');

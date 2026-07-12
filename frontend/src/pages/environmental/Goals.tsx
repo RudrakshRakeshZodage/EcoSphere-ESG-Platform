@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getEnvironmentalGoals, createEnvironmentalGoal, updateEnvironmentalGoal, getDepartments } from '../../services/api';
-import { EnvironmentalGoal, Department } from '../../types';
+import type { EnvironmentalGoal, Department } from '../../types';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { DataTable } from '../../components/ui/DataTable';
