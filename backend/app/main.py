@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import get_settings
@@ -60,3 +60,8 @@ async def health_check():
 @app.get("/")
 async def root_redirect():
     return RedirectResponse(url="/docs")
+
+
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    return Response(status_code=204)
