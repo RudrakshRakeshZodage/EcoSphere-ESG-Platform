@@ -37,7 +37,7 @@ export const Login: React.FC = () => {
         password,
       });
       if (error) throw error;
-      navigate('/');
+      navigate('/dashboard');
     } catch (err: any) {
       console.error("Login exception caught:", err);
       let errMsg = 'Failed to sign in';

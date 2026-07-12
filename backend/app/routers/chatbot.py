@@ -94,7 +94,19 @@ async def chat_query(query: ChatQuery, current_user: dict = Depends(get_current_
             "answer": "No active CSR campaigns currently running."
         }
 
-    # Default fallback - general ESG guide
+    # Check for general ESG definitions
+    if any(k in msg for k in ["what is esg", "define esg", "meaning of esg", "about esg", "esg stand for", "esg meaning"]):
+        return {
+            "answer": "**ESG** stands for **Environmental, Social, and Governance**.\n\n• **Environmental**: How a company safeguards the environment (e.g., carbon emissions, waste).\n• **Social**: How it manages relationships with employees, suppliers, customers, and communities.\n• **Governance**: Deals with a company’s leadership, executive pay, audits, internal controls, and shareholder rights.\n\nEcoSphere helps you track and improve all these metrics!"
+        }
+        
+    # Check for greetings or help
+    if msg in ["hi", "hello", "hey", "help", "what can you do"]:
+        return {
+            "answer": "Hello! I am EcoBot, your real-time ESG Advisor. You can ask me things like:\n• 'What is my score?' (or just type your name)\n• 'How many users are there?'\n• 'Show me carbon emissions'\n• 'Are there any compliance issues?'\n• 'What is ESG?'"
+        }
+
+    # Default fallback
     return {
-        "answer": "Welcome to EcoBot! I am your real-time ESG Advisor. Ask me anything about our product profiles, employee scores, compliance issues, or carbon accounting!"
+        "answer": "I'm not quite sure how to answer that yet! I am currently a keyword-based assistant. Try asking me about 'carbon emissions', 'compliance issues', 'CSR activities', or type an employee's name to see their profile."
     }

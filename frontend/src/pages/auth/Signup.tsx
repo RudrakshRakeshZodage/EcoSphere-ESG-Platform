@@ -138,7 +138,7 @@ export const Signup: React.FC = () => {
       });
       if (loginError) throw loginError;
 
-      navigate('/');
+      navigate('/dashboard');
     } catch (err: any) {
       console.error("Signup exception caught:", err);
       let errMsg = 'Failed to sign up';
